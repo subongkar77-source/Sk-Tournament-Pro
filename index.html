@@ -1,1 +1,102 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FF Tournament Pro</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #121212; color: #fff; padding: 15px; }
+        header { text-align: center; padding: 20px 0; background: linear-gradient(135deg, #ff4e50, #f9d423); border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        header h1 { font-size: 24px; text-transform: uppercase; letter-spacing: 1px; }
+        .tournament-card { background: #1e1e1e; border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px solid #333; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .match-title { font-size: 18px; color: #f9d423; margin-bottom: 10px; font-weight: bold; }
+        .match-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; font-size: 14px; color: #bbb; }
+        .match-details span strong { color: #fff; }
+        .btn { width: 100%; padding: 12px; background: #ff4e50; border: none; color: white; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        .btn:hover { background: #e03e40; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; padding: 20px; z-index: 100; }
+        .modal-content { background: #222; padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; border: 1px solid #444; }
+        .modal h3 { margin-bottom: 15px; color: #f9d423; text-align: center; }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; background: #333; border: 1px solid #555; color: white; border-radius: 6px; font-size: 15px; }
+        .payment-methods { display: flex; justify-content: space-around; margin: 15px 0; }
+        .pay-option { background: #333; padding: 10px 15px; border-radius: 6px; cursor: pointer; border: 1px solid #555; font-size: 14px; }
+    </style>
+</head>
+<body>
 
+    <header>
+        <h1>Free Fire Tournaments</h1>
+        <p>खेलो और जीतो रोज़ाना!</p>
+    </header>
+
+    <div id="tournament-list">
+        <div class="tournament-card">
+            <div class="match-title">🔥 Daily Full Map Battle (Squad)</div>
+            <div class="match-details">
+                <span>📅 Date: <strong>Today</strong></span>
+                <span>⏰ Time: <strong>08:00 PM</strong></span>
+                <span>💰 Prize Pool: <strong>₹500</strong></span>
+                <span>🎟️ Entry Fee: <strong>₹20</strong></span>
+                <span>🔫 Per Kill: <strong>₹5</strong></span>
+                <span>🗺️ Map: <strong>Bermuda</strong></span>
+            </div>
+            <button class="btn" onclick="openJoinModal('Match #101', 20)">Join Match</button>
+        </div>
+    </div>
+
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <h3 id="modal-match-name">Join Tournament</h3>
+            <p style="font-size: 14px; color: #aaa; text-align: center; margin-bottom: 15px;">Entry Fee: <span id="modal-entry-fee" style="color:#fff; font-weight:bold;">₹0</span></p>
+            
+            <input type="text" id="player-name" placeholder="Free Fire UID (e.g., 12345678)" required>
+            <input type="text" id="player-phone" placeholder="WhatsApp Number" required>
+            
+            <p style="font-size: 14px; margin-bottom: 5px;">Select Payment App:</p>
+            <div class="payment-methods">
+                <div class="pay-option active">Any UPI App (GPay/PhonePe/Paytm)</div>
+            </div>
+
+            <button class="btn" onclick="processPayment()">Pay & Register</button>
+            <button class="btn" onclick="closeModal()" style="background:#444; margin-top:10px;">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_UPI_ID = "shubhankar@upi"; 
+        const ADMIN_NAME = "Sk Tournament Admin";
+
+        let selectedMatch = "";
+        let entryFee = 0;
+
+        function openJoinModal(matchName, fee) {
+            selectedMatch = matchName;
+            entryFee = fee;
+            document.getElementById('modal-match-name').innerText = "Join " + matchName;
+            document.getElementById('modal-entry-fee').innerText = "₹" + fee;
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+        }
+
+        function processPayment() {
+            const uid = document.getElementById('player-name').value;
+            const phone = document.getElementById('player-phone').value;
+
+            if(!uid || !phone) {
+                alert("कृपया अपनी UID और फ़ोन नंबर सही से भरें!");
+                return;
+            }
+
+            const upiUrl = `upi://pay?pa=${ADMIN_UPI_ID}&pn=${encodeURIComponent(ADMIN_NAME)}&tn=${encodeURIComponent(selectedMatch + ' UID-' + uid)}&am=${entryFee}&cu=INR`;
+            window.location.href = upiUrl;
+
+            alert("पेमेंट पूरा करने के बाद स्क्रीनशॉट सुरक्षित रखें।");
+            closeModal();
+        }
+    </script>
+</body>
+</html>
