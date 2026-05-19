@@ -2,7 +2,8 @@ import os
 from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='.')
+
 
 # स्क्रीनशॉट फ़ाइलें सुरक्षित रखने के लिए फोल्डर सेट करें
 UPLOAD_FOLDER = 'static/uploads'
