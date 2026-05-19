@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FF Tournament Pro</title>
+    <title>SK Tournament Pro</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #121212; color: #fff; padding: 15px; }
@@ -17,7 +17,6 @@
         .btn { width: 100%; padding: 12px; background: #ff4e50; border: none; color: white; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 6px; transition: 0.2s; }
         .btn:hover { background: #e03e40; }
         
-        /* Modal Styles */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 9999; }
         .modal-content { background: #222; padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; border: 1px solid #555; color: white; text-align: center; }
         .modal h3 { margin-bottom: 15px; color: #f9d423; text-align: center; }
@@ -60,7 +59,6 @@
 
             <div id="paymentStep2" style="display: none;">
                 <p style="font-size: 14px; color: #ff9800; margin-bottom: 10px;">Scan this QR using any UPI App:</p>
-                
                 <img id="qrImage" src="" alt="UPI QR Code" style="border: 6px solid white; border-radius: 8px; width: 200px; height: 200px; margin: 5px auto 15px auto; display: block;">
                 
                 <p style="font-size: 14px; color: #aaa; margin-bottom: 10px;">OR (For Mobile Users)</p>
@@ -68,7 +66,7 @@
                 
                 <hr style="border-color: #444; margin-bottom: 15px;">
                 
-                <p style="font-size: 13px; color: #4caf50; margin-bottom: 8px; text-align: left;">⚠️ Payment ke baad 12-digit UTR No. daalein:</p>
+                <p style="font-size: 13px; color: #4caf50; margin-bottom: 8px; text-align: left;">⚠️ Payment ke baad UTR Number daalein:</p>
                 <input type="text" id="txn-id" placeholder="Enter 12-digit UTR / Txn ID" required>
                 
                 <button type="button" class="btn" onclick="finalSubmit()" style="background: #4caf50;">Submit Registration</button>
@@ -87,7 +85,6 @@
             document.getElementById('modal-match-name').innerText = "Join " + matchName;
             document.getElementById('modal-entry-fee').innerText = "₹" + fee;
             
-            // Default Step 1 dikhana aur Step 2 chhupana
             document.getElementById('paymentStep1').style.display = 'block';
             document.getElementById('paymentStep2').style.display = 'none';
             document.getElementById('paymentModal').style.display = 'flex';
@@ -100,7 +97,6 @@
             document.getElementById('txn-id').value = '';
         }
 
-        // Step 1 se Step 2 par jaane aur QR generate karne ka function
         async function goToPayment() {
             let uid = document.getElementById('player-uid').value;
             let phone = document.getElementById('player-phone').value;
@@ -110,35 +106,31 @@
                 return;
             }
 
-            // Backend Python se QR code data mangwana
             let response = await fetch('/generate_payment', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ uid: uid, amount: entryFee })
+                body: JSON.stringify({ uid: uid })
             });
 
             let data = await response.json();
             if(data.status === 'success') {
-                // QR Image aur Intent Link ko set karna
                 document.getElementById('qrImage').src = data.qr_code_url;
                 document.getElementById('upiIntentLink').href = data.upi_url;
                 
-                // Form shift karna
                 document.getElementById('paymentStep1').style.display = 'none';
                 document.getElementById('paymentStep2').style.display = 'block';
             } else {
-                alert("Payment window screen load nahi ho payi!");
+                alert("Payment screen load nahi ho payi!");
             }
         }
 
-        // Final registration aur UTR submit karne ka function
         async function finalSubmit() {
             let uid = document.getElementById('player-uid').value;
             let phone = document.getElementById('player-phone').value;
             let utr = document.getElementById('txn-id').value;
 
             if(!utr) {
-                alert("Kripya payment karne ke baad UTR/Transaction ID zaroor daalein!");
+                alert("Kripya payment karne ke baad UTR number zaroor daalein!");
                 return;
             }
 
@@ -147,7 +139,7 @@
             formData.append('fee', entryFee);
             formData.append('playerUID', uid);
             formData.append('whatsapp', phone);
-            formData.append('utrId', utr); // UTR python backend jayega
+            formData.append('utrId', utr);
 
             let response = await fetch('/submit_registration', {
                 method: 'POST',
