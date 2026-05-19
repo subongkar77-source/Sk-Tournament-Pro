@@ -1,51 +1,73 @@
 import os
+import urllib.parse
 from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__, template_folder='.')
 
+# ⚠️ YAHAN APNI ASLI UPI ID DAALO (Jahan aapko paisa chahiye)
+YOUR_UPI_ID = "shubhankar@oksbi"  # Isko apni real UPI ID se badal lena
+YOUR_NAME = "SK TOURNAMENT"
 
-# स्क्रीनशॉट फ़ाइलें सुरक्षित रखने के लिए फोल्डर सेट करें
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# अगर प्रोजेक्ट में 'static/uploads' फोल्डर नहीं है, तो यह उसे अपने आप बना देगा
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-# होम पेज का रूट (जो आपकी index.html फ़ाइल को लोड करेगा)
+# 1. Home Page Route
 @app.route('/')
 def home():
     return render_template('index.html')
 
-# पेमेंट और रजिस्ट्रेशन डेटा रिसीव करने का रूट
-@app.route('/submit_payment', methods=['POST'])
-def submit_payment():
+# 2. Payment details aur QR Code generate karne ka Route
+@app.route('/generate_payment', methods=['POST'])
+def generate_payment():
+    data = request.json
+    player_uid = data.get('uid', 'Unknown')
+    amount = "20"  # Match entry fee ₹20
+    
+    # Ek unique message banate hain jo payment ke waqt dikhega
+    txn_note = f"Entry for UID {player_uid}"
+    
+    # Standard Indian UPI URL Format
+    upi_url = f"upi://pay?pa={YOUR_UPI_ID}&pn={urllib.parse.quote(YOUR_NAME)}&am={amount}&cu=INR&tn={urllib.parse.quote(txn_note)}"
+    
+    # Google ke free API se dynamic QR Code ka link banayenge
+    qr_code_url = f"https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl={urllib.parse.quote(upi_url)}"
+    
+    return jsonify({
+        "status": "success",
+        "upi_url": upi_url,
+        "qr_code_url": qr_code_url
+    })
+
+# 3. Final Form aur UTR Submit karne ka Route
+@app.route('/submit_registration', methods=['POST'])
+def submit_registration():
     try:
         match_name = request.form.get('matchName')
         fee = request.form.get('fee')
         player_uid = request.form.get('playerUID')
         whatsapp = request.form.get('whatsapp')
-        txn_id = request.form.get('txnId')
-        screenshot = request.files.get('screenshot')
-        
-        if not all([match_name, player_uid, whatsapp, txn_id, screenshot]):
-            return jsonify({"status": "error", "message": "कृपया सभी विवरण भरें और स्क्रीनशॉट अपलोड करें!"}), 400
-            
-        clean_filename = secure_filename(screenshot.filename)
-        unique_filename = f"{player_uid}_{txn_id}_{clean_filename}"
-        
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-        screenshot.save(file_path)
-        
-        print("\n=== नया टूर्नामेंट रजिस्ट्रेशन प्राप्त हुआ ===")
-        print(f"मैच: {match_name} | प्लेयर FF UID: {player_uid} | UTR: {txn_id}")
-        print("============================================\n")
-        
-        return jsonify({"status": "success", "message": "रजिस्ट्रेशन सफल रहा!"})
-        
+        utr_id = request.form.get('utrId')  # User ka UTR Number
+
+        if not all([match_name, player_uid, whatsapp, utr_id]):
+            return jsonify({"status": "error", "message": "Kripya saari details aur UTR Number bharein!"}), 400
+
+        # Render logs me data print hoga (Aap yahan se verify kar sakte ho)
+        print("\n=== 🎯 NAYA TOURNAMENT REGISTRATION ===")
+        print(f"Match: {match_name}")
+        print(f"Player FF UID: {player_uid}")
+        print(f"WhatsApp: {whatsapp}")
+        print(f"UTR / Transaction ID: {utr_id}")
+        print(f"Fee: ₹{fee}")
+        print("=========================================\n")
+
+        return jsonify({"status": "success", "message": "Registration Safal Raha! Aapki details verify ki ja rahi hain."})
+
     except Exception as e:
-        return jsonify({"status": "error", "message": "सर्वर में कोई तकनीकी खराबी आई है।"}), 500
+        return jsonify({"status": "error", "message": f"Server me koi dikkat aayi: {str(e)}"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
