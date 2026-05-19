@@ -2,7 +2,7 @@
 import urllib.parse
 from flask import Flask, render_template, request, jsonify
 
-app = Flask(__name__, template_folder='.')
+app = Flask(__name__)
 
 # ⚠️ Yahan apni UPI ID aur Name check kar lena
 YOUR_UPI_ID = "shubhankar@oksbi"  
