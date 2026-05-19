@@ -7,20 +7,21 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #121212; color: #fff; padding: 15px; }
-        header { text-align: center; padding: 20px 0; background: linear-gradient(135deg, #ff4e50, #f9d423); border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        header { text-align: center; padding: 20px 0; background: linear-gradient(135deg, #ff4e50, #f9d423); border-radius: 12px; margin-bottom: 20px; }
         header h1 { font-size: 24px; text-transform: uppercase; letter-spacing: 1px; }
-        .tournament-card { background: #1e1e1e; border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px solid #333; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        header p { font-size: 14px; margin-top: 5px; }
+        .tournament-card { background: #1e1e1e; border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px solid #333; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .match-title { font-size: 18px; color: #f9d423; margin-bottom: 10px; font-weight: bold; }
-        .match-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; font-size: 14px; color: #bbb; }
+        .match-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; font-size: 14px; }
         .match-details span strong { color: #fff; }
-        .btn { width: 100%; padding: 12px; background: #ff4e50; border: none; color: white; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        .btn { width: 100%; padding: 12px; background: #ff4e50; border: none; color: white; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 6px; transition: 0.2s; }
         .btn:hover { background: #e03e40; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; padding: 20px; z-index: 100; }
-        .modal-content { background: #222; padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; border: 1px solid #444; }
+        
+        /* Modal Styles */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 9999; }
+        .modal-content { background: #222; padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; border: 1px solid #555; color: white; }
         .modal h3 { margin-bottom: 15px; color: #f9d423; text-align: center; }
-        input { width: 100%; padding: 12px; margin-bottom: 15px; background: #333; border: 1px solid #555; color: white; border-radius: 6px; font-size: 15px; }
-        .payment-methods { display: flex; justify-content: space-around; margin: 15px 0; }
-        .pay-option { background: #333; padding: 10px 15px; border-radius: 6px; cursor: pointer; border: 1px solid #555; font-size: 14px; }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; background: #333; border: 1px solid #555; color: white; border-radius: 6px; }
     </style>
 </head>
 <body>
@@ -48,25 +49,30 @@
     <div class="modal" id="paymentModal">
         <div class="modal-content">
             <h3 id="modal-match-name">Join Tournament</h3>
-            <p style="font-size: 14px; color: #aaa; text-align: center; margin-bottom: 15px;">Entry Fee: <span id="modal-entry-fee" style="color:#fff; font-weight:bold;">₹0</span></p>
+            <p style="font-size: 14px; color: #aaa; text-align: center; margin-bottom: 15px;">Entry Fee: <span id="modal-entry-fee" style="color: #ff4e50; font-weight: bold;">₹20</span></p>
             
-            <input type="text" id="player-name" placeholder="Free Fire UID (e.g., 12345678)" required>
-            <input type="text" id="player-phone" placeholder="WhatsApp Number" required>
-            
-            <p style="font-size: 14px; margin-bottom: 5px;">Select Payment App:</p>
-            <div class="payment-methods">
-                <div class="pay-option active">Any UPI App (GPay/PhonePe/Paytm)</div>
+            <div style="background: #333; padding: 10px; font-weight: bold; border-radius: 6px; margin-bottom: 15px; text-align: center; color: #ff4e50; border: 1px dashed #ff4e50; font-size: 14px;">
+                Send Entry Fee to UPI ID: <br>
+                <span style="color: #fff; user-select: all; font-size: 16px;">shubhankar@upi</span>
             </div>
 
-            <button class="btn" onclick="processPayment()">Pay & Register</button>
-            <button class="btn" onclick="closeModal()" style="background:#444; margin-top:10px;">Cancel</button>
+            <form id="paymentForm" enctype="multipart/form-data">
+                <input type="text" id="player-name" placeholder="Free Fire UID (e.g., 12345678)" required>
+                <input type="text" id="player-phone" placeholder="WhatsApp Number" required>
+                <input type="text" id="txn-id" placeholder="12-digit UTR / Transaction ID" required>
+                
+                <div style="text-align: left; margin-bottom: 15px;">
+                    <label style="font-size: 12px; color: #aaa; display: block; margin-bottom: 5px;">Upload Payment Screenshot:</label>
+                    <input type="file" id="screenshot-file" accept="image/*" required style="background: transparent; border: none; padding: 0; color: #fff;">
+                </div>
+
+                <button type="submit" class="btn">Submit & Register</button>
+                <button type="button" class="btn" onclick="closeModal()" style="background:#444; margin-top:10px;">Cancel</button>
+            </form>
         </div>
     </div>
 
     <script>
-        const ADMIN_UPI_ID = "shubhankar@upi"; 
-        const ADMIN_NAME = "Sk Tournament Admin";
-
         let selectedMatch = "";
         let entryFee = 0;
 
@@ -80,22 +86,33 @@
 
         function closeModal() {
             document.getElementById('paymentModal').style.display = 'none';
+            document.getElementById('paymentForm').reset();
         }
 
-        function processPayment() {
-            const uid = document.getElementById('player-name').value;
-            const phone = document.getElementById('player-phone').value;
+        // Send Data to Python Backend
+        document.getElementById('paymentForm').onsubmit = async function(e) {
+            e.preventDefault();
+            
+            let formData = new FormData();
+            formData.append('matchName', selectedMatch);
+            formData.append('fee', entryFee);
+            formData.append('playerUID', document.getElementById('player-name').value);
+            formData.append('whatsapp', document.getElementById('player-phone').value);
+            formData.append('txnId', document.getElementById('txn-id').value);
+            formData.append('screenshot', document.getElementById('screenshot-file').files[0]);
 
-            if(!uid || !phone) {
-                alert("कृपया अपनी UID और फ़ोन नंबर सही से भरें!");
-                return;
+            let response = await fetch('/submit_payment', {
+                method: 'POST',
+                body: formData
+            });
+
+            let result = await response.json();
+            if(result.status === 'success') {
+                alert("Registration Successful! Admin verification ke baad 10 min mein aapka slot approve ho jayega.");
+                closeModal();
+            } else {
+                alert("Error: " + result.message);
             }
-
-            const upiUrl = `upi://pay?pa=${ADMIN_UPI_ID}&pn=${encodeURIComponent(ADMIN_NAME)}&tn=${encodeURIComponent(selectedMatch + ' UID-' + uid)}&am=${entryFee}&cu=INR`;
-            window.location.href = upiUrl;
-
-            alert("पेमेंट पूरा करने के बाद स्क्रीनशॉट सुरक्षित रखें।");
-            closeModal();
         }
     </script>
 </body>
