@@ -5,7 +5,6 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    # Flask default mein templates folder ko root mein dhund leta hai
     return render_template('index.html')
 
 if __name__ == '__main__':
