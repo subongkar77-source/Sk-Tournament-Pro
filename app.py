@@ -1,11 +1,12 @@
 import os
 from flask import Flask, render_template, request, jsonify
 
+# Flask ko default templates folder mein dhoondhne dein
 app = Flask(__name__)
 
-# --- ROUTES ---
 @app.route('/')
 def home():
+    # Render root mein 'templates/index.html' apne aap load karega
     return render_template('index.html')
 
 @app.route('/generate_payment', methods=['POST'])
