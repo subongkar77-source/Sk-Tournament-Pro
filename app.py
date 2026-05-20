@@ -1,9 +1,8 @@
 import os
 from flask import Flask, render_template, request, jsonify
 
-# Render ke liye pathing ko fix karna zaroori hai
-template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
-app = Flask(__name__, template_folder=template_dir)
+# Pathing ko render ke liye robust banaya gaya hai
+app = Flask(__name__, template_folder='templates')
 
 # --- CONFIGURATION ---
 YOUR_UPI_ID = "shubhankar@oksbi"
@@ -12,7 +11,7 @@ YOUR_NAME = "SK TOURNAMENT"
 # --- ROUTES ---
 @app.route('/')
 def home():
-    # Ab Flask seedha 'templates/index.html' dhundhega
+    # Flask ab apne aap 'templates/index.html' dhundh lega
     return render_template('index.html')
 
 @app.route('/generate_payment', methods=['POST'])
@@ -45,6 +44,5 @@ def submit_registration():
         return jsonify({"status": "error", "message": "Server error"}), 500
 
 if __name__ == '__main__':
-    # Render ke liye dynamic port
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
