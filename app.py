@@ -1,13 +1,13 @@
-import os
 from flask import Flask, render_template
+import os
 
-# Ye lines Flask ko batayengi ki templates kahan hain, chahe server kahin bhi ho
-template_dir = os.path.abspath('templates')
-app = Flask(__name__, template_folder=template_dir)
+app = Flask(__name__)
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run()
+    # रेंडर के लिए पोर्ट बाइंडिंग
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
