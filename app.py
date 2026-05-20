@@ -1,14 +1,16 @@
 import os
 from flask import Flask, render_template
 
-# 'os.path' use karne se path ki dikkat khatam ho jati hai
-template_dir = os.path.abspath('templates')
-app = Flask(__name__, template_folder=template_dir)
+app = Flask(__name__)
 
 @app.route('/')
 def home():
+    # Debugging print
+    print(f"Current Working Directory: {os.getcwd()}")
+    print(f"Files in folder: {os.listdir('.')}")
+    if os.path.exists('templates'):
+        print(f"Files in templates: {os.listdir('templates')}")
+    else:
+        print("Templates folder not found!")
+    
     return render_template('index.html')
-
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
