@@ -1,9 +1,11 @@
 import os
 from flask import Flask, render_template
 
-# यह कोड आपकी वर्तमान डायरेक्टरी के आधार पर 'templates' फोल्डर ढूंढ लेगा
-template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
-app = Flask(__name__, template_folder=template_dir)
+# Current file path se template folder ka path nikalna
+basedir = os.path.abspath(os.path.dirname(__file__))
+template_folder = os.path.join(basedir, 'templates')
+
+app = Flask(__name__, template_folder=template_folder)
 
 @app.route('/')
 def home():
