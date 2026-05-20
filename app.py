@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, request, jsonify
 
-# Pathing ko render ke liye robust banaya gaya hai
+# Flask ko seedha directory batate hain
 app = Flask(__name__, template_folder='templates')
 
 # --- CONFIGURATION ---
@@ -11,7 +11,6 @@ YOUR_NAME = "SK TOURNAMENT"
 # --- ROUTES ---
 @app.route('/')
 def home():
-    # Flask ab apne aap 'templates/index.html' dhundh lega
     return render_template('index.html')
 
 @app.route('/generate_payment', methods=['POST'])
@@ -37,7 +36,6 @@ def submit_registration():
         player_uid = request.form.get('playerUID')
         whatsapp = request.form.get('whatsapp')
         utr_id = request.form.get('utrID')
-        
         print(f"NEW REGISTRATION: {match_name}, UID: {player_uid}")
         return jsonify({"status": "success", "message": "Registration Successful!"})
     except Exception as e:
