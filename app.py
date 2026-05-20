@@ -1,8 +1,9 @@
+ import os
 from flask import Flask, render_template
-import os
 
-# Yahan humne saaf-saaf bata diya hai ki templates folder wahi hai jahan app.py hai
-app = Flask(__name__, template_folder='templates')
+# 'os.path' use karne se path ki dikkat khatam ho jati hai
+template_dir = os.path.abspath('templates')
+app = Flask(__name__, template_folder=template_dir)
 
 @app.route('/')
 def home():
