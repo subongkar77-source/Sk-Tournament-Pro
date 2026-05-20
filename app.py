@@ -47,7 +47,8 @@ def submit_registration():
         whatsapp = request.form.get('whatsapp')
         utr_id = request.form.get('utrId')
 
-        if not all([match_name, player_uid, whatsapp, utr_id]):
+         if not all([match_name, player_uid, whatsapp, utr_id]):
+
             return jsonify({"status": "error", "message": "Kripya saari details aur UTR Number bharein!"}), 400
 
         # Render dashboard logs me display hone wala registration data
