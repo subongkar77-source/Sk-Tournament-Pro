@@ -1,11 +1,11 @@
- import os
-from flask import Flask, render_template
+  from flask import Flask, render_template
+import os
 
-# Ye line server ke current path ke hisaab se 'templates' folder dhundegi
-app = Flask(__name__, template_folder=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates'))
+app = Flask(__name__)
 
 @app.route('/')
 def home():
+    # Flask default mein templates folder ko root mein dhund leta hai
     return render_template('index.html')
 
 if __name__ == '__main__':
