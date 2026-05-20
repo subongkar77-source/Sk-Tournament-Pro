@@ -1,4 +1,4 @@
- import os
+import os
 from flask import Flask, render_template
 
 # 'os.path' use karne se path ki dikkat khatam ho jati hai
